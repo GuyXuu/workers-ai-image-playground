@@ -21,7 +21,12 @@ export async function POST(request: NextRequest) {
 
     // @ts-ignore
     const img = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
-    await BUCKET.put(`${promptKey}.jpeg`, img)
+    try {
+      await BUCKET.put(`${promptKey}.jpeg`, img);
+      console.log('图像数据已成功保存到 Cloudflare R2 存储桶');
+    } catch (error) {
+          console.error('保存图像数据到 Cloudflare R2 存储桶时出错:', error);
+    }
 
     return new Response(`data:image/jpeg;base64,${response.image}`, {
       headers: {
